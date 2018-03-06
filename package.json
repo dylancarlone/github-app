@@ -10,7 +10,6 @@
   "author": "Brandon Keepers",
   "license": "ISC",
   "dependencies": {
-    "github": "^10.1.0",
     "jsonwebtoken": "^7.3.0"
   },
   "devDependencies": {

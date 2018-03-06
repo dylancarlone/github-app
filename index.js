@@ -1,9 +1,8 @@
 const jwt = require('jsonwebtoken')
-const GitHubApi = require('github')
 
-module.exports = function ({id, cert, debug = false}) {
+// https://github.com/octokit/rest.js/tree/master/lib/plugins
+module.exports = function (github, {id, cert, debug = false}) {
   function asApp () {
-    const github = new GitHubApi({debug})
     github.authenticate({type: 'integration', token: generateJwt(id, cert)})
     // Return a promise to keep API consistent
     return Promise.resolve(github)
@@ -12,7 +11,6 @@ module.exports = function ({id, cert, debug = false}) {
   // Authenticate as the given installation
   function asInstallation (installationId) {
     return createToken(installationId).then(res => {
-      const github = new GitHubApi({debug})
       github.authenticate({type: 'token', token: res.data.token})
       return github
     })
@@ -39,5 +37,5 @@ module.exports = function ({id, cert, debug = false}) {
     return jwt.sign(payload, cert, {algorithm: 'RS256'})
   }
 
-  return {asApp, asInstallation, createToken}
+  return Object.assign(github, {asApp, asInstallation, createToken})
 }
